@@ -24,7 +24,7 @@ export default function App() {
                   role="presentation"
                 />
               </a>
-              <strong>Solid Notes</strong>
+              <strong>Dash Proposals</strong>
             </section>
             <section class="sidebar-menu" role="menubar">
               <SearchField />
