@@ -13,7 +13,7 @@ export default function NoteList(props: { searchText: string }) {
           <div class="notes-empty">
             {props.searchText
               ? `Couldn't find any notes titled "${props.searchText}".`
-              : "No notes created yet!"}
+              : "No proposals yet!"}
           </div>
         }
       >
