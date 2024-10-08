@@ -4,6 +4,68 @@ import { marked } from "marked";
 import { storage } from "./db";
 import type { Note } from "./types";
 
+// import { GObject } from "../lib/dashGov";
+// import {client} from '../lib/dashClient'
+
+// const gobjPrepare = () => {
+//   console.log("gobjPrepare", GObject)
+// }
+
+// type documentMessages = [{
+//   message : String
+// }]
+
+// export const getDocuments = async () => {
+//   try {
+//     console.log("getting documents")
+//     const resultDocs = await client.platform.documents.get(
+//       'tutorialContract.note',
+//       { limit: 5 }
+//     )
+//     const documentMessages = resultDocs.map(d => d.toJSON().message)
+//     console.log("documents", documentMessages)
+//     // setDocs(fixedDocs)
+//     return documentMessages
+//   } catch (e) {
+//     console.error('Something went wrong:\n', e)
+//   } finally {
+//     client.disconnect()
+//   }
+// }
+
+export const getProposals = async () => {    
+    console.log("getting proposals")
+        // typically http://localhost:19998/
+    let baseUrl = "https://trpc.digitalcash.dev/";
+    let basicAuth = btoa(`user:pass`);
+    let payload = JSON.stringify({
+        "method": "gobject",
+        "params": [
+            "list"
+        ]
+    });
+    let resp = await fetch(baseUrl, {
+        method: "POST",
+        headers: {
+            "Authorization": `Basic ${basicAuth}`,
+            "Content-Type": "application/json",
+        },
+        body: payload,
+    });
+
+    let data = await resp.json();
+    if (data.error) {
+        let err = new Error(data.error.message);
+        Object.assign(err, data.error);
+        throw err;
+    }
+    // console.log("data.result", data.result)
+    let propsArray = Object.values(data.result);
+    console.log("proposals", propsArray)
+    // setProposals(propsArray)
+    return propsArray;
+}
+
 export const getNotes = cache(async (searchText: string) => {
   "use server";
   return (((await storage.getItem("notes:data")) as Note[]) || [])
@@ -28,7 +90,7 @@ export const getNotePreview = cache(async (id: number) => {
     note => note.id === id
   );
   if (!note) return;
-  note.body = marked(note.body);
+  note.body = await marked(note.body); // added await to fix type error
   note.updatedAt = format(new Date(note.updatedAt), "d MMM yyyy 'at' h:mm bb");
   return note;
 }, "note-preview");

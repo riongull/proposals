@@ -13,6 +13,8 @@ export default createHandler(() => (
         </head>
         <body>
           <div id="app">{children}</div>
+          <script src="/pubScript.js"></script>
+          <script src="/dashGov.js"></script>
           {scripts}
         </body>
       </html>
